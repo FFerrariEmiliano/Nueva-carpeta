@@ -1,0 +1,94 @@
+@import url('https://fonts.cdnfonts.com/css/common-pixel');                
+
+body{
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    font-family: 'Common Pixel', sans-serif;
+    user-select: none;
+}
+
+#screen{
+    background-color: #000;
+    width: calc(50% - 40px);
+    height: calc(50vh - 40px);
+    border: 20px solid #2e2e2e;
+    position: relative;
+    overflow: hidden;
+    scale: 100%;
+    .bars{
+        background-color: #fff;
+        width: 3px;
+        height: 35px;
+        position: absolute;
+    }
+    .ball{
+        background-color: #fff;
+        width: 5px;
+        height: 5px;
+        position: absolute;
+        z-index: 999;
+        border-radius: 50%;
+    }
+}
+
+#divisor{
+    display: inline-block;
+    width: 1px;
+    background-color: #2e2e2e;
+    height: 100%;
+    position: absolute;
+    left: calc(50% - 0px);
+}
+
+#circle{
+    display: inline-block;
+    border: 2px solid #2e2e2e;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    left: calc(50% - 51px);
+    top: calc(50% - 51px);
+    border-radius: 50%;
+}
+
+#pointsCont{
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px;
+    padding-left: 1px;
+    font-size: 40px;
+}
+
+.playerPoints{
+    text-align: center;
+    color: #2e2e2e;
+}
+
+#player1{
+}
+#player2{
+}
+
+.bars:nth-child(odd){
+    border-right: 2px solid #2e2e2e  ;
+    left: 0;
+}
+.bars:nth-child(even){
+    border-left: 2px solid #2e2e2e  ;
+    right: 0;
+}
+
+.power{
+    width: 20px;
+    height: 20px;
+    background-color: aqua;
+    position: absolute;
+    left: calc(50% - 10px);
+}
