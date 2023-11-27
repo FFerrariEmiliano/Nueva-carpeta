@@ -10,12 +10,91 @@ body{
     background-color: #000;
     font-family: 'Common Pixel', sans-serif;
     user-select: none;
+    overflow: auto;
+}
+
+#menu{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-content: space-around;
+    align-items: center;
+    grid-template-columns: .5fr 1fr;
+    background-color: #000;
+    z-index: 10000;
+    color: #fff;
+    font-size: 30px;
+    #ul__menu{
+        list-style: none;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        row-gap: 50px;
+        height: 100%;
+        text-align: center;
+    }
+    #ul__menu li{
+        padding: 10px 0;
+        cursor: pointer;
+        display: inline-block;
+        list-style: none;
+    }
+    #ul__menu li:hover{
+        outline: 2px solid #ddd;
+    }
+}
+
+#pong-title{
+    margin: 0;
+    align-self: center;
+    text-align: center;
+}
+
+#timer {
+    padding: 10px;
+    height: 40px;
+    font-size: 40px;
+    text-align: center;
+    position: absolute;
+    top: 0px;
+    left: calc(50% - 60px);
+    z-index: 200;
+    background-color: #000;
+    border: 20px solid #2e2e2e;
+    color: #fff;
+}
+
+.none{
+    opacity: 0;
+    pointer-events: none;
+}
+
+#state{
+    position: absolute;
+    z-index: 2000;
+    color: #2e2e2e;
+    bottom: 0;
+    width: 100%;
+}
+
+#state ul{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    width: 100%;
+    list-style: none;
+    padding: 0;
 }
 
 #screen{
     background-color: #000;
-    width: calc(50% - 40px);
-    height: calc(50vh - 40px);
+    width: calc(100% - 40px);
+    max-width: 700px;
+    height: calc(100vh - 40px);
+    max-height: 300px;
     border: 20px solid #2e2e2e;
     position: relative;
     overflow: hidden;
@@ -32,7 +111,6 @@ body{
         height: 5px;
         position: absolute;
         z-index: 999;
-        border-radius: 50%;
     }
 }
 
@@ -71,10 +149,7 @@ body{
     color: #2e2e2e;
 }
 
-#player1{
-}
-#player2{
-}
+
 
 .bars:nth-child(odd){
     border-right: 2px solid #2e2e2e  ;
@@ -86,9 +161,27 @@ body{
 }
 
 .power{
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     background-color: aqua;
     position: absolute;
-    left: calc(50% - 10px);
+    left: calc(50% - 5px);
 }
+
+.rainbow-text {
+    background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbow_animation 2s ease-in-out 3;
+    background-size: 400% 100%;
+  }
+  
+  @keyframes rainbow_animation {
+    0%,100% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 100% 0;
+    }
+  }
+  
