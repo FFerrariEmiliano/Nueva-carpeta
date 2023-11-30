@@ -441,7 +441,7 @@ function handleKeyPress(event) {
     if (event.code === "Enter" && menu.className == "none") {
         console.log("new ball");
         menustart.removeEventListener("click", removeMenu)
-        ClickInPlay(5, 3)
+        ClickInPlay(60, 3)
         throwControl.textContent = "RESET = ENTER"
         throwControl.classList.remove("possible")
         menustart.classList.add("impossible")
