@@ -13,6 +13,43 @@ body{
     overflow: auto;
 }
 
+.container-question{
+    color: #fff;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 25% 25% ;
+    grid-template-rows: 25% 25%;
+    align-content: center;
+    justify-content: center;
+    grid-template-areas: 
+    "ask ask"
+    "yes no";
+    align-items: center;
+    background-color: #000000bb;
+    z-index: 1000;
+    text-align: center;
+    font-size: 30px;
+    .ask{
+        grid-area: ask;
+    }
+    .yes, .no{
+        display: inline-block;
+        cursor: pointer;
+        padding: 10px;
+    }
+    .yes:hover, .no:hover{
+        outline:2px solid #ddd;
+    }
+    .yes{
+        grid-area: yes;
+    }
+    .no{
+        grid-area: no;
+    }
+}
+
 #menu{
     position: absolute;
     width: 100%;
@@ -23,7 +60,7 @@ body{
     grid-template-columns: .5fr 1fr;
     background-color: #000;
     z-index: 10000;
-    color: #fff;
+    color: #ccc;
     font-size: 30px;
     #ul__menu{
         list-style: none;
@@ -42,7 +79,7 @@ body{
         list-style: none;
     }
     #ul__menu li:hover{
-        outline: 2px solid #ddd;
+        outline: 2px solid #ccc;
     }
 }
 
@@ -58,12 +95,12 @@ body{
     font-size: 40px;
     text-align: center;
     position: absolute;
-    top: 0px;
-    left: calc(50% - 60px);
+    margin: 0 auto;
+    top: 0;
     z-index: 200;
     background-color: #000;
     border: 20px solid #2e2e2e;
-    color: #fff;
+    color: #ccc;
 }
 
 .none{
@@ -89,16 +126,33 @@ body{
     padding: 0;
 }
 
+#version-game{
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 15px;
+}
+
 #screen{
     background-color: #000;
-    width: calc(100% - 40px);
-    max-width: 700px;
-    height: calc(100vh - 40px);
-    max-height: 300px;
+    width: 700px;
+    height: 300px;
     border: 20px solid #2e2e2e;
     position: relative;
     overflow: hidden;
     scale: 100%;
+    #pong-background{
+        font-size: 100px;
+        margin: 0 0 0 6.8px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #080808;
+    }
     .bars{
         background-color: #fff;
         width: 3px;
@@ -132,6 +186,22 @@ body{
     left: calc(50% - 51px);
     top: calc(50% - 51px);
     border-radius: 50%;
+    color: #fff;
+    text-align: center;
+}
+
+#rsv-count{
+    width: 10%;
+    color: #ccc;
+    position: absolute;
+    z-index: 1500;
+    text-align: center;
+    scale: 4;
+    opacity: 1;
+}
+
+#rsv-count p{
+    margin: 0 10px;
 }
 
 #pointsCont{
@@ -148,8 +218,6 @@ body{
     text-align: center;
     color: #2e2e2e;
 }
-
-
 
 .bars:nth-child(odd){
     border-right: 2px solid #2e2e2e  ;
@@ -171,6 +239,7 @@ body{
 .rainbow-text {
     background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
     -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
     animation: rainbow_animation 2s ease-in-out 3;
     background-size: 400% 100%;
@@ -185,3 +254,28 @@ body{
     }
   }
   
+.possible{
+    animation: 1s shine infinite;
+}
+
+.impossible {
+    opacity: .5;
+    cursor: default !important;
+}
+
+.transparent{
+    background-color: #000900b4;
+}
+
+.impossible:hover{
+    outline: 0px solid #000 !important;
+}
+
+@keyframes shine {
+    from{
+        color: #2e2e2e;
+    }
+    to{
+        color: #fff;
+    }
+}

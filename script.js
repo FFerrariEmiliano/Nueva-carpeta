@@ -1,41 +1,115 @@
+const body = document.getElementById("body")
+const container = document.querySelector(".container-question")
+const yes = document.querySelector(".yes")
+const no = document.querySelector(".no")
 const menu = document.getElementById("menu")
-menu.addEventListener("click", ()=>{
-    ClickInPlay()
-})
+const menustart = document.getElementById("menu-start")
+const menuContinue = document.getElementById("continue")
+const pause = document.getElementById("pause")
+const throwControl = document.getElementById("throw")
+const rsvTimeContainer = document.getElementById("rsv-count")
+const P1HTML = document.getElementById("player1")
+const P2HTML = document.getElementById("player2")
 
-function ClickInPlay() {
-    menu.classList.add("none")
-    const screenDiv = document.querySelector("#screen")
-    const P1HMTL = document.getElementById("player1")
-    const P2HMTL = document.getElementById("player2")
-    
-    let points = {
+
+let response
+let GameIsRunning = false
+let enter = false
+let fCountInit = true
+
+let thrownIn
+let counting = false
+function fCount(time) {
+    if (!counting) {
+        counting = !counting
+        rsvTimeContainer.innerHTML = `
+        <p id="rsv-count__throw">throwing</p>
+        <span id="rsv__span">${time}</span>
+        `
+        if (!thrownIn) {
+            thrownIn = setInterval(() => {
+            time--
+            rsvTimeContainer.innerHTML = `
+            <p id="rsv-count__throw">throwing</p>
+            <span id="rsv__span">${time}</span>
+            `
+            if (time <= 0) {
+                rsvTimeContainer.innerHTML = "GO"
+                setTimeout(() => {
+                    rsvTimeContainer.innerHTML = ""
+                }, 500);
+                clearInterval(thrownIn)
+                thrownIn = null
+            }
+        }, 1000);
+        }
+        counting = !counting
+    }
+}
+
+let points = {
+    p1: 1,
+    p2: 1
+}
+
+function resetPoints() {
+    points = {
         p1: 1,
         p2: 1
     }
+    P1HTML.innerHTML = 0
+    P2HTML.innerHTML = 0
+}
+
+let started = false
+function ClickInPlay(gametimeselected, functionCount) {
+    menuContinue.classList.remove("impossible")
+    menuContinue.classList.add("possible")
+    document.removeEventListener("keypress", handleKeyPress)
+    fCount(functionCount)
+    started = true
+    container.classList.add("none")
+    menu.classList.add("none")
+    const screenDiv = document.querySelector("#screen")
     
-    let GameIsRunning = false
-    
-    let gameTime = 60
+    let gameTime = gametimeselected
     let intervalGame
     
     const timer = document.getElementById("timer")
+    timer.textContent = gametimeselected
     
     function tf() {
         return Math.random() < 0.5;
     }
+
+    function fContinue() {
+            initCount()
+            menu.classList.add("none")
+    }
+
     function initCount() {
-        GameIsRunning = true
+        menu.classList.add("none")
+        if (enter) {
+            GameIsRunning = true
             intervalGame = setInterval(() => {
+                if (ball.bounce == 2) {
+                    gameTime++
+                    console.log("sumado");
+                }
                 gameTime--;
                 timer.textContent = gameTime
-                if (gameTime == 0) {
+                if (gameTime <= 0) {
                     clearInterval(intervalGame)
+                    showResults()
+                    enter = true
+                    menuContinue.removeEventListener("click", fContinue)
                 }
-              }, 1000);
+            }, 1000);
+        }
     }
     
     function pauseCount() {
+        menu.classList.add("none")
         clearInterval(intervalGame);
         GameIsRunning = !GameIsRunning
     }
@@ -57,10 +131,10 @@ function ClickInPlay() {
                     case this.up:
                         this.upBar()
                         break;
-                    case this.down:
+                        case this.down:
                         this.downBar()
                         break;
-                }
+                    }
             })
             document.addEventListener("keyup", (keyPressed)=>{
                 switch (keyPressed.key) {
@@ -87,11 +161,16 @@ function ClickInPlay() {
         }
     
         play(){
+            this.dy = 0
+            this.y = this.sH / 2
             this.element.style.transform = `translateY(${this.y}px)`
+            setTimeout(() => {
+                this.dy = 1
+            }, functionCount * 1000);
         }
     
         upBar(){
-            if (!this.moving && GameIsRunning) {
+            if (!this.moving && enter && GameIsRunning) {
                 this.moving = setInterval(() => {
                     if (this.y > 0) {
                     this.y -= this.dy
@@ -107,20 +186,20 @@ function ClickInPlay() {
         }
         
         downBar(){
-            if (!this.moving && GameIsRunning) {
+            if (!this.moving && enter && GameIsRunning) {
                 this.moving = setInterval(() => {
                     if (this.y < this.sH) {
-                    this.y += this.dy
+                        this.y += this.dy
                     this.element.style.transform = `translateY(${this.y}px)`
                 } else this.stop()
             }, 1);
             }
         }
-    
+        
         reverseControl(){
              let savedUp = this.up
              let savedDown = this.down
-            this.down = savedUp
+             this.down = savedUp
             this.up = savedDown
             setTimeout(() => {
                 this.down = savedDown
@@ -134,8 +213,49 @@ function ClickInPlay() {
     const P1 = new Bars("w", "s")
     P1.play()
     
-    class Ball{
+    class Power{
         constructor(){
+            this.element = document.createElement("span")
+            this.element.classList.add("power")
+            this.sH = Math.floor(screenDiv.offsetHeight - 40)
+            this.sW = Math.floor(screenDiv.offsetWidth)
+            this.y = 0
+            this.x = this.sW / 2 - 5
+            this.dy = .1
+            this.moving
+        }
+    fallOrRise(bool){
+        bool ? (this.dy = Math.abs(this.dy), this.y = -50, console.log("falling")): (this.dy = -Math.abs(this.dy), this.y = this.sH + 50, console.log("ascending"))
+    }
+
+    movePower(){
+        if (!this.moving) {
+            this.moving = setInterval(() => {
+                this.y += this.dy
+                this.element.style.transform = `translateY(${this.y}px)`
+            }, 10);
+        }
+    }
+    
+    addToScreen(){
+        if (!screenDiv.contains(this.element)) {
+            screenDiv.appendChild(this.element)
+            this.fallOrRise(tf())
+            this.movePower()
+        }
+    }
+    
+    removeToScreen(){
+        if (screenDiv.contains(this.element)) {
+            screenDiv.removeChild(this.element)
+        }
+    }
+}
+
+const power = new Power()
+
+class Ball{
+    constructor(){
             this.element = document.createElement("div")
             this.element.classList.add("ball")
             screenDiv.appendChild(this.element)
@@ -148,13 +268,15 @@ function ClickInPlay() {
             this.dx = 1
             this.dy = 1
             this.moving = null
-            this.left 
+            this.bounce = 0
         }
     
         reset(){
             pauseCount()
+            enter = false
             this.element.style.transform = `translateY(${this.sH / 2}px) translateX(${this.sW / 2 + 3}px)`
             clearInterval(this.moving)
+            this.bounce = 0
             this.moving = null
             this.y = this.sH / 2
             this.x = this.sW / 2 + 3
@@ -162,49 +284,67 @@ function ClickInPlay() {
             this.dx *= -1
             this.ballHeight = this.element.offsetHeight
         }
-    
+        
         get differenceY(){
             return [((this.y + this.ballHeight /2) - (P1.top + P1.barHeight/2)) / 17.5,
-                    ((this.y + this.ballHeight /2) - (P2.top + P1.barHeight/2)) / 17.5]
+                    ((this.y + this.ballHeight /2) - (P2.top + P2.barHeight/2)) / 17.5]
                 }
-    
-        stopBall(){
-            
-        }
-    
+                
         moveBall(){
             initCount()
             this.moving = setInterval(() => {
-                console.log(321);
                 if (!GameIsRunning) {
                     return;
                 }
-                if (this.y + 2.5 >= this.sH || this.y + 2.5 <= 0) {
+                if (this.y >= this.sH || this.y <= 0) {
                     this.dy *= -1
+                    this.bounce++
                 }
-                if ((this.x <= 5 && ((this.y + 2.5 >= P1.top) && (this.y + 2.5 <= P1.bottom)))) {
+                if ((this.x <= 5 && ((this.y + 5 >= P1.top) && (this.y - 5 <= P1.bottom)))) {
                     this.dy = -ball.differenceY[0]
-                        this.dx *= -1
-                    }
-                else if ((this.x >= this.sW && (this.y + 2.5 >= P2.top) && (this.y + 2.5 <= P2.bottom))) {
-                        this.dy = -ball.differenceY[1]
-                        this.dx *= -1
-                    }
+                    this.dx *= -1
+                    this.bounce = 0
+                }
+                else if ((this.x >= this.sW && (this.y + 5 >= P2.top) && (this.y - 5 <= P2.bottom))) {
+                    this.dy = -ball.differenceY[1]
+                    this.dx *= -1
+                    this.bounce = 0
+                }
                     let win = 2000
                 if (this.x - 5 >= this.sW + 5) {
-                    this.reset()
-                    P1HMTL.innerHTML = points.p1++
-                    P1HMTL.classList.add("rainbow-text")
+                console.log("point");
+                fCount(functionCount)
+                this.reset()
+                P1.play()
+                P2.play()
+                ball.reset()
+                setTimeout(() => {
+                    ball.reset()
+                    enter = true
+                    ball.moveBall()
+                }, functionCount * 1000);
+                    P1HTML.innerHTML = points.p1++
+                    P1HTML.classList.add("rainbow-text")
                     setTimeout(() => {
-                        P1HMTL.classList.remove("rainbow-text")
+                        P1HTML.classList.remove("rainbow-text")
                     }, win);
                 } 
                 else if (this.x <= 0) {
+                console.log("point");
+                fCount(functionCount)
                     this.reset()
-                    P2HMTL.innerHTML = points.p2++
-                    P2HMTL.classList.add("rainbow-text")
+                    P1.play()
+                    P2.play()
+                    ball.reset()
                     setTimeout(() => {
-                        P2HMTL.classList.remove("rainbow-text")
+                        ball.reset()
+                        enter = true
+                        ball.moveBall()
+                    }, functionCount * 1000);
+                    P2HTML.innerHTML = points.p2++
+                    P2HTML.classList.add("rainbow-text")
+                    setTimeout(() => {
+                        P2HTML.classList.remove("rainbow-text")
                     }, win);
                 }
                 if (GameIsRunning) {
@@ -216,64 +356,110 @@ function ClickInPlay() {
         }
     }
     
-        const ball = new Ball()
-        
+    const ball = new Ball()
+    // setTimeout(() => {
+    //         power.addToScreen()
+    //         power.movePower()
+    //     }, 1000);
+    
         ball.reset()
         
-        class Power{
-            constructor(){
-                this.element = document.createElement("span")
-                this.element.classList.add("power")
-                this.sH = Math.floor(screenDiv.offsetHeight - 40)
-                this.sW = Math.floor(screenDiv.offsetWidth)
-                this.y = 0
-                this.x = this.sW / 2 - 5
-                this.dy = .1
-                this.moving
-        }
-        fallOrRise(bool){
-            bool ? (this.dy = Math.abs(this.dy), this.y = -50, console.log("falling")): (this.dy = -Math.abs(this.dy), this.y = this.sH + 50, console.log("ascending"))
-        }
-    
-        movePower(){
-            if (!this.moving) {
-                this.moving = setInterval(() => {
-                    this.y += this.dy
-                    this.element.style.transform = `translateY(${this.y}px)`
-                }, 10);
+        function showResults() {
+            throwControl.classList.add("impossible")
+            ball.reset()
+            GameIsRunning = true
+            P1.play()
+            P2.play()
+            if (points.p1 > points.p2) {
+                timer.textContent = "PLAYER 1 WINS"
+            } else if (points.p1 < points.p2){
+                timer.textContent = "PLAYER 2 WINS"
+            } else {
+                timer.textContent = "TIE"
             }
-        }
-    
-        addToScreen(){
-            if (!screenDiv.contains(this.element)) {
-                screenDiv.appendChild(this.element)
-                this.fallOrRise(tf())
-                this.movePower()
-            }
-        }
-        
-        removeToScreen(){
-            if (screenDiv.contains(this.element)) {
-                screenDiv.removeChild(this.element)
-            }
-        }
+            menuContinue.classList.remove("possible")
+            menuContinue.classList.add("impossible")
+        } 
+
+    function clickInYes() {
+        console.log("si");
+        container.classList.add("none")
+        fCount(functionCount)
+        gameTime = gametimeselected
+        timer.textContent = gametimeselected
+        resetPoints()
+        power.removeToScreen()
+        P1.play()
+        P2.play()
+        ball.reset()
+        setTimeout(() => {
+            ball.reset()
+            enter = true
+            ball.moveBall()
+        }, functionCount * 1000);
+    }
+
+    function clickInNo() {
+        console.log("no");
+        container.classList.add("none")
+        initCount()
     }
     
-    const power = new Power()
+    function yn() {
+        GameIsRunning = false
+        container.classList.remove("none")
+        yes.removeEventListener("click", clickInYes)
+        yes.addEventListener("click", clickInYes)
+        no.removeEventListener("click", clickInNo)
+        no.addEventListener("click", clickInNo)
+    }
+            
     
     document.addEventListener("keypress", (start)=>{
-        if (start.code === "Enter" && GameIsRunning) {
-        power.removeToScreen()
-        setTimeout(() => {
-            power.addToScreen()
-        }, 1000);
-        ball.reset()
-        ball.moveBall()
-    }
-        if (start.code === "Space" && !GameIsRunning) {
+        if (start.code === "Enter" && menu.className == "none") {
+            pauseCount()
+            yn()
+        }
+        if (start.code === "Space" && !GameIsRunning && enter && container.className == "none") {
             initCount()
         } else if (start.code === "Space" && GameIsRunning) {
             pauseCount()
+            menu.classList.remove("none")
         }
     })
+    menuContinue.addEventListener("click", fContinue)
+    setTimeout(() => {
+        ball.reset()
+        enter = true
+        ball.moveBall()
+    }, functionCount * 1000);
 }
+
+menustart.addEventListener("click", removeMenu)
+
+function handleKeyPress(event) {
+    if (event.code === "Enter" && menu.className == "none") {
+        console.log("new ball");
+        menustart.removeEventListener("click", removeMenu)
+        ClickInPlay(5, 3)
+        throwControl.textContent = "RESET = ENTER"
+        throwControl.classList.remove("possible")
+        menustart.classList.add("impossible")
+    } else if (event.code === "Space" && !started) {
+        menu.classList.remove("none")
+        started = false
+        menustart.addEventListener("click", removeMenu)
+    }
+    event.preventDefault()
+}
+
+function removeMenu() {
+    if (!started) {
+        menu.classList.add("none")
+        container.classList.add("none")
+        document.addEventListener("keypress", handleKeyPress)
+    }
+}
+
+menuContinue.classList.add("impossible")
+throwControl.classList.add("possible")
