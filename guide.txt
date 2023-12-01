@@ -1,0 +1,15 @@
+Controles:
+jugador 1 se mueve con w y s
+jugador 2 se mueve con o y l 
+pausa se pone con espacio
+enter es resetear/iniciar
+
+Mecanicas:
+cuando la pelota rebote 2 veces tanto en el borde superior como inferior se añadira un segundo al contador de la partida 
+
+Actualizaciones a futuro:
+efectos y optencion de ellos: 
+el efecto saldra cada cierto tiempo del borde superior o inferior y estara en la pantalla siempre y cuando no haya un efecto existente el color del cubo indica el efecto a obtener 
+aumentar el tamaño de la barra del jugador que haya tocado la bola por ultima vez 
+reducir el tamaño de la barra del oponente
+invertir los controles del oponente 

@@ -1,3 +1,91 @@
+const menuOpt = document.getElementById("volume__options")
+
+const opt = document.getElementById("options")
+
+const optSect = document.getElementById("opt-sect")
+
+const contOpt = document.querySelector(".vol-opt")
+
+const voltest1 = new Audio("pong/coin-collect-retro-8-bit-sound-effect-145251.mp3")
+class VolumeOption{
+    constructor(nameVolume, audio, volumeDefault, loop){
+        const containerConfig = document.createElement("div")
+        const paragraph = document.createElement("p")
+        const controls = document.createElement("div")
+        const min = document.createElement("span")
+        const numVol = document.createElement("b")
+        const max = document.createElement("span")
+        this.soundInstance = new Audio(audio)
+        this.soundInstance.volume = volumeDefault
+        this.soundInstance.loop = loop
+
+        containerConfig.appendChild(paragraph)
+        controls.appendChild(min)
+        controls.appendChild(numVol)
+        controls.appendChild(max)
+        containerConfig.appendChild(controls)
+
+        paragraph.textContent = nameVolume
+        min.classList.add("change-vol")
+        min.textContent = "-"
+        numVol.classList.add("value")
+        numVol.textContent = this.soundInstance.volume * 10
+        max.classList.add("change-vol")
+        max.textContent = "+"
+
+        contOpt.appendChild(containerConfig)
+
+        min.addEventListener("click", ()=>{
+            if (numVol.textContent > 0) {
+                numVol.textContent--
+                this.soundInstance.volume = numVol.textContent/10
+                this.soundInstance.currentTime = 0
+                this.soundInstance.volume = this.soundInstance.volume
+                this.soundInstance.play()
+            }
+        })
+
+        max.addEventListener("click", ()=>{
+            if (numVol.textContent < 10) {
+                numVol.textContent++
+                this.soundInstance.volume = numVol.textContent/10
+                voltest1.volume = this.soundInstance.volume
+            }
+            this.soundInstance.currentTime = 0
+            this.soundInstance.play()
+        })
+
+        containerConfig.addEventListener("mouseleave", ()=>{
+            this.soundInstance.currentTime = 0
+            this.soundInstance.pause()
+            console.log("lol");
+        })
+
+    }
+
+    play(){
+        this.soundInstance.play()
+    }
+
+    pause(){
+        this.soundInstance.pause()
+    }
+}
+
+const countDownAudio = new VolumeOption("countdown volume", 'pong/countdown-sound-effect-8-bit-151797.mp3', .3)
+const clockAudio = new VolumeOption("clock ticking volume", 'pong/clock-ticking-60-second-countdown-118231.mp3', .2, true)
+const pointAudio = new VolumeOption("point volume", 'pong/tennis-smash-100733.mp3', .6)
+const smashBarAudio = new VolumeOption("hit bar volume", 'pong/one_beep-99630.mp3', .9)
+
+menuOpt.addEventListener("click", ()=>[
+    opt.classList.remove("none")
+])
+
+const back = document.getElementById("back")
+back.addEventListener("click", ()=>{
+    opt.classList.add("none")
+})
+
 const body = document.getElementById("body")
 const container = document.querySelector(".container-question")
 const yes = document.querySelector(".yes")
@@ -16,9 +104,10 @@ let response
 let GameIsRunning = false
 let enter = false
 let fCountInit = true
-
 let thrownIn
 let counting = false
+
+
 function fCount(time) {
     if (!counting) {
         counting = !counting
@@ -26,13 +115,14 @@ function fCount(time) {
         <p id="rsv-count__throw">throwing</p>
         <span id="rsv__span">${time}</span>
         `
+        countDownAudio.play()
         if (!thrownIn) {
             thrownIn = setInterval(() => {
-            time--
-            rsvTimeContainer.innerHTML = `
-            <p id="rsv-count__throw">throwing</p>
-            <span id="rsv__span">${time}</span>
-            `
+                time--
+                rsvTimeContainer.innerHTML = `
+                <p id="rsv-count__throw">throwing</p>
+                <span id="rsv__span">${time}</span>
+                `
             if (time <= 0) {
                 rsvTimeContainer.innerHTML = "GO"
                 setTimeout(() => {
@@ -63,6 +153,11 @@ function resetPoints() {
 
 let started = false
 function ClickInPlay(gametimeselected, functionCount) {
+
+    function resetAll() {
+        
+    }
+
     menuContinue.classList.remove("impossible")
     menuContinue.classList.add("possible")
     document.removeEventListener("keypress", handleKeyPress)
@@ -88,6 +183,7 @@ function ClickInPlay(gametimeselected, functionCount) {
     }
 
     function initCount() {
+        clockAudio.play()
         menu.classList.add("none")
         if (enter) {
             GameIsRunning = true
@@ -109,6 +205,7 @@ function ClickInPlay(gametimeselected, functionCount) {
     }
     
     function pauseCount() {
+        clockAudio.pause()
         menu.classList.add("none")
         clearInterval(intervalGame);
         GameIsRunning = !GameIsRunning
@@ -265,8 +362,8 @@ class Ball{
             this.y = this.sH / 2
             this.Bheight = this.element.offsetHeight
             this.BWidth = this.element.offsetWidth
-            this.dx = 1
             this.dy = 1
+            this.dx = 1
             this.moving = null
             this.bounce = 0
         }
@@ -304,34 +401,21 @@ class Ball{
                     this.dy = -ball.differenceY[0]
                     this.dx *= -1
                     this.bounce = 0
+                    smashBarAudio.currentTime = 0
+                    smashBarAudio.play()
                 }
                 else if ((this.x >= this.sW && (this.y + 5 >= P2.top) && (this.y - 5 <= P2.bottom))) {
                     this.dy = -ball.differenceY[1]
                     this.dx *= -1
                     this.bounce = 0
+                    smashBarAudio.currentTime = 0
+                    smashBarAudio.play()
                 }
                     let win = 2000
                 if (this.x - 5 >= this.sW + 5) {
-                console.log("point");
-                fCount(functionCount)
-                this.reset()
-                P1.play()
-                P2.play()
-                ball.reset()
-                setTimeout(() => {
-                    ball.reset()
-                    enter = true
-                    ball.moveBall()
-                }, functionCount * 1000);
-                    P1HTML.innerHTML = points.p1++
-                    P1HTML.classList.add("rainbow-text")
-                    setTimeout(() => {
-                        P1HTML.classList.remove("rainbow-text")
-                    }, win);
-                } 
-                else if (this.x <= 0) {
-                console.log("point");
-                fCount(functionCount)
+                    pointAudio.play()
+                    console.log("point");
+                    fCount(functionCount)
                     this.reset()
                     P1.play()
                     P2.play()
@@ -341,11 +425,30 @@ class Ball{
                         enter = true
                         ball.moveBall()
                     }, functionCount * 1000);
-                    P2HTML.innerHTML = points.p2++
-                    P2HTML.classList.add("rainbow-text")
+                    P1HTML.innerHTML = points.p1++
+                    P1HTML.classList.add("rainbow-text")
                     setTimeout(() => {
-                        P2HTML.classList.remove("rainbow-text")
+                        P1HTML.classList.remove("rainbow-text")
                     }, win);
+                } 
+                else if (this.x <= 0) {
+                    pointAudio.play()
+                    console.log("point");
+                    fCount(functionCount)
+                        this.reset()
+                        P1.play()
+                        P2.play()
+                        ball.reset()
+                        setTimeout(() => {
+                            ball.reset()
+                            enter = true
+                            ball.moveBall()
+                        }, functionCount * 1000);
+                        P2HTML.innerHTML = points.p2++
+                        P2HTML.classList.add("rainbow-text")
+                        setTimeout(() => {
+                            P2HTML.classList.remove("rainbow-text")
+                        }, win);
                 }
                 if (GameIsRunning) {
                     this.x += this.dx
@@ -453,8 +556,13 @@ function handleKeyPress(event) {
     event.preventDefault()
 }
 
+var backgroundMusic2 = new Audio('2020-03-22_-_8_Bit_Surf_-_FesliyanStudios.com_-_David_Renda.mp3'); // Reemplaza con el nombre correcto de tu archivo
+backgroundMusic2.loop = true;
+backgroundMusic2.volume = .5
+
 function removeMenu() {
     if (!started) {
+        backgroundMusic2.play()
         menu.classList.add("none")
         container.classList.add("none")
         document.addEventListener("keypress", handleKeyPress)

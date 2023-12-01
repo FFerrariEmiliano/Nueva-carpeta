@@ -9,42 +9,66 @@
     <title></title>
 </head>
 <body id="body">
+
     <div class="container-question">
         <p class="ask">Do you want to reset the game?</p>
         <p class="yes">YES</p>
         <p class="no">NO</p>
     </div>
+
     <div id="menu">
+        
         <ul id="ul__menu">
             <li id="menu-start">new game</li>
             <li id="continue">continue</li>
-            <li>guide</li>
-            <li>options</li>
+            <li class="impossible" title="coming soon" id="guide">guide</li>
+            <li id="volume__options">volume</li>
         </ul>
+
         <h1 id="pong-title">PONG</h1>
-        <p id="version-game">version 1.0</p>
+        <p id="version-game">version 1.01</p>
     </div>
+
+    <div class="none" id="options">
+
+        <div id="selected-option">
+            <span class="possible" id="back">back</span>
+            <h2 class="title-option">sound effects</h2>
+
+            <div class="vol-opt"></div>
+
+        </div>
+
+    </div>
+
     <div id="rsv-count">
         <p id="rsv-count__throw"></p>
         <span id="rsv__span"></span>
     </div>
+
     <div id="timer">60</div>
+
     <div id="screen">
         <p id="pong-background">PONG</p>
+
         <div id="state">
             <ul>
+                <li id="controls-p1">Up: W Down: S </li>
                 <li id="pause">MENU = SPACE</li>
                 <li id="throw">PLAY = ENTER</li>
+                <li id="controls-p2">Up: O Down: L </li>
             </ul>
         </div>
+
         <div id="pointsCont">
-        <span class="playerPoints" id="player1">0</span>
-        <span class="playerPoints" id="player2">0</span>
+            <span class="playerPoints" id="player1">0</span>
+            <span class="playerPoints" id="player2">0</span>
         </div>
+
         <span id="divisor"></span>
-        <span id="circle">
-        </span>
+        <span id="circle"></span>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
